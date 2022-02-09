@@ -66,11 +66,9 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         """Serve a POST request."""
         if self.deal_post_data()[0]:
-            self.send_response(301)
-            self.send_header("Location", self.path + "/")
-            self.end_headers()
+            self.send_head()
         else:
-            self.send_response(502)
+            self.send_response(404)
             self.end_headers()
         
         
