@@ -1,0 +1,56 @@
+.rows {
+    display: flex;
+    flex-direction: row;
+}
+.columns {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex{
+    display: flex;
+}
+.auto{
+    margin: auto;
+}
+
+.logo{
+    width: 4em;
+    height: 4em;
+}
+
+body{
+    height: 100vh;
+    background: rgb(149,0,255);
+    background: linear-gradient(180deg, rgba(149,0,255,0.01) 0%, rgba(239,248,255,1) 50%, rgba(149,0,255,0.01) 100%);
+    overflow-x: hidden;
+}
+
+.render {
+    min-height: 50vh;
+    min-width: 20vw;
+}
+.top{
+    width: 100vw;
+    height: max-content;
+}
+
+.hidden{
+    display: none;
+}
+.rendu{
+    width: 90%;
+    margin: 1em;
+    border-radius: 1em;
+}
+footer{
+    position: absolute;
+    bottom: 1px;
+    left: 20px;
+}
+.ftext, .ftext a{
+    color: rgb(197, 197, 197);
+}
+.card{
+    opacity: 0.95;
+}

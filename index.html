@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <link
+  href="https://cdn.jsdelivr.net/npm/neomo@2.1.0/dist/neomo.min.css"
+  rel="stylesheet"
+/>
+    <title>Blendline</title>
+</head>
+<body>
+    <header>
+        <!--Navbar-->
+        <div class="container outset neomo rows rounded card mt-1">
+            <div class="icon-circle m-1">
+                <img src="blendline.png" alt="" class="logo">
+            </div>
+            <div class="flex m-5">
+                <div class="outset card auto">
+                    <h1 class="m-1">Blendline</h1>
+                </div>
+                
+            </div>
+            
+        </div>
+    </header>
+    <div class="flex top container neomo">
+        <div class="auto flex middle container">
+            <div class="card outset m-2 p-1 render settings mr-10 container ">
+                <!--Paramètre du rendu-->
+                <h1 class="mb-0">Paramètre</h1>
+                <form ENCTYPE="multipart/form-data" method="post">
+                    <div class="file m-2">
+                        <h4>Fichier : </h4>
+                        <input class="file-name" value="Choose a file..." disabled="disabled" />
+                        <label for="file-label">Upload</label>
+                        <input id="file-label" type="file" class="file-hidden" name="file"/>
+                      </div>
+                      <div class="m-2">
+                        <h4>Frame : </h4>
+                        <input
+                        data-range-id="range"
+                        type="range"
+                        min="0"
+                        max="150"
+                        class="range-round inset-neomo myRange"
+                        name="frame"
+                        />
+                        <p>Frame : <span data-range-id="range" class="demo"></span></p>
+                      </div>
+                      <div class="m-2">
+                          <h4>Format : </h4>
+                        <div class="dropdown">
+                            <select class="outset-neomo p-2" name="format">
+                                <option value="PNG" selected>PNG</option>
+                                <option value="JPEG">JPEG</option>
+                                <option value="MPEG">MPEG</option>
+                              </select>
+                          </div>
+                      </div>
+                      <input type="submit" value="Render !" class="button outset m-10 neomo" onclick="toggle()">
+                </form>
+                    
+            </div>
+            <div class="loader">
+                
+                <button class="button outset-neomo p-5">
+                    <div class="arrow">
+                        <svg style="width: 2em !important; height: auto; "
+                            xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink"
+                            width="242px" height="289px">
+                            <image style="width: 2em !important; height: auto; filter:brightness(0)" x="0px" y="0px" width="242px" height="289px" xlink:href="data:img/png;base64,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" />
+                            </svg>
+                    </div>
+                    <div class="loader border-gray point-purple hidden spin"></div>
+                  </button>
+            </div>
+            <div class="card outset m-2 p-1 render ml-10 container columns">
+                <!--Rendu -->
+                    <h1>Rendu final</h1>
+                    <button class="button outset neomo p-1 m-1" style="position: absolute; top: 5px; right: 5px;" onclick="load_img()">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" style="fill:rgb(151, 151, 151)"><path d="M0 0h24v24H0z" fill="none"/><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                    </button>
+                
+                <div class="img auto" onload="load_img()">
+                    <img src="rendu.png" alt="" aria-placeholder="blendline.png" class="rendu" >
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+            <p class="ftext">Made with ❤️ by <a href="http://github.com/urbskali">@urbskali</a></p>
+    </footer>
+    <script src="data.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/neomo@2.1.0/dist/neomo.min.js"></script>
+    <script>
+        function toggle(){
+            var arrow = document.querySelector('.arrow');
+            var spin = document.querySelector('.spin');
+            arrow.classList.toggle('hidden');
+            spin.classList.toggle('hidden');
+        }
+        function load_img() {
+            var rendu = document.querySelector('.rendu');
+            if (nb_frame < 10) {
+                rendu.src = `render000${nb_frame}.png`;
+            } else if (nb_frame < 100) {
+                rendu.src = `render00${nb_frame}.png`;
+            } else {
+                rendu.src = `render0${nb_frame}.png`;
+            }
+            
+        }
+    </script>
+</body>
+</html>
