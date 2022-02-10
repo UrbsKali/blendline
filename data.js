@@ -1,1 +1,1 @@
-nb_frame = 26
+nb_frame = 1

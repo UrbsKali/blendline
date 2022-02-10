@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
+    <link rel="shortcut icon" href="blendline.png" type="image/x-icon">
     <link
   href="https://cdn.jsdelivr.net/npm/neomo@2.1.0/dist/neomo.min.css"
   rel="stylesheet"
@@ -27,9 +28,9 @@
             
         </div>
     </header>
-    <div class="flex top container neomo">
+    <div class="flex top container">
         <div class="auto flex middle container">
-            <div class="card outset m-2 p-1 render settings mr-10 container ">
+            <div class="card outset m-2 p-1 render settings mr-10 container neomo">
                 <!--Paramètre du rendu-->
                 <h1 class="mb-0">Paramètre</h1>
                 <form ENCTYPE="multipart/form-data" method="post">
@@ -79,22 +80,20 @@
                     <div class="loader border-gray point-purple hidden spin"></div>
                   </button>
             </div>
-            <div class="card outset m-2 p-1 render ml-10 container columns">
+            <div class="card outset m-2 p-1 render ml-10 container columns neomo">
                 <!--Rendu -->
                     <h1>Rendu final</h1>
                     <button class="button outset neomo p-1 m-1" style="position: absolute; top: 5px; right: 5px;" onclick="load_img()">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24" style="fill:rgb(151, 151, 151)"><path d="M0 0h24v24H0z" fill="none"/><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
                     </button>
                 
-                <div class="img auto" onload="load_img()">
+                <div class="img auto">
                     <img src="rendu.png" alt="" aria-placeholder="blendline.png" class="rendu" >
                 </div>
             </div>
         </div>
     </div>
-    <footer>
-            <p class="ftext">Made with ❤️ by <a href="http://github.com/urbskali">@urbskali</a></p>
-    </footer>
+    
     <script src="data.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/neomo@2.1.0/dist/neomo.min.js"></script>
     <script>
@@ -116,5 +115,8 @@
             
         }
     </script>
+    <footer onload="load_img()">
+        <p class="ftext">Made with ❤️ by <a href="http://github.com/urbskali">@urbskali</a></p>
+    </footer>
 </body>
 </html>

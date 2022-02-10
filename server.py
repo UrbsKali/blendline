@@ -66,10 +66,15 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
     def do_POST(self):
         """Serve a POST request."""
         if self.deal_post_data()[0]:
-            self.send_head()
-        else:
-            self.send_response(404)
+            f = open("index.html", "rb")
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            fs = os.fstat(f.fileno())
+            self.send_header("Content-Length", str(fs[6]))
+            self.send_header("Last-Modified", self.date_time_string(fs.st_mtime))
             self.end_headers()
+            self.copyfile(f, self.wfile)
+            f.close()
         
         
 
@@ -187,8 +192,6 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 if os.path.exists(index):
                     path = index
                     break
-            else:
-                return self.list_directory(path)
         ctype = self.guess_type(path)
         try:
             # Always read in binary mode. Opening files in text mode may cause

@@ -44,7 +44,7 @@ body{
     border-radius: 1em;
 }
 footer{
-    position: absolute;
+    position: fixed;
     bottom: 1px;
     left: 20px;
 }
