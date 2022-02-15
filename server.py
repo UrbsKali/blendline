@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from encodings import utf_8
+import socket
 import os
 import os.path
 import posixpath
@@ -12,15 +12,16 @@ import mimetypes
 import re
 import argparse
 
-can_render = True
+can_render = True # to prevent double rendering
 
 def render_file(fn, frame, _format):
+    # remove the comment if your are on linux and don't want to accumulate files
     global can_render
     can_render = not can_render
     if can_render:
         return
     print("zbeib", str(frame))
-    os.system("blender "+ str(fn) +" -o //render -F "+ str(_format) +" -f "+ str(frame) +" -E CYCLES -b") # blender chambre.blend -o //output -F PNG -f 24 -E CYCLES -b
+    os.system("blender "+ str(fn) +" -o //render -F "+ str(_format) +" -f "+ str(frame) +" -E CYCLES -b")
     fr = open("data.js", "r")
     #del_old(fr)
     fr.close()
@@ -40,32 +41,21 @@ def del_old(f):
 
 class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
  
-    """Simple HTTP request handler with GET/HEAD/POST commands.
-    This serves files from the current directory and any of its
-    subdirectories.  The MIME type for files is determined by
-    calling the .guess_type() method. And can reveive file uploaded
-    by client.
-    The GET/HEAD/POST requests are identical except that the HEAD
-    request omits the actual contents of the file.
-    """
-
- 
     def do_GET(self):
-        """Serve a GET request."""
         f = self.send_head()
         if f:
             self.copyfile(f, self.wfile)
             f.close()
  
     def do_HEAD(self):
-        """Serve a HEAD request."""
         f = self.send_head()
         if f:
             f.close()
  
     def do_POST(self):
-        """Serve a POST request."""
+        """Serve a POST request, aka form upload in this specific case"""
         if self.deal_post_data()[0]:
+            # if the form is correct, send a the main page back to display the rendered image with js
             f = open("index.html", "rb")
             self.send_response(200)
             self.send_header("Content-type", "text/html")
@@ -78,16 +68,17 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         
         
 
-    def deal_post_data(self): 
+    def deal_post_data(self):
+        """Treat the post data, return the file name"""
         content_type = self.headers['content-type']
         if not content_type:
-            return (False, "Content-Type header doesn't contain boundary")
+            return (False)
         boundary = content_type.split("=")[1].encode()
         remainbytes = int(self.headers['content-length'])
         line = self.rfile.readline()
         remainbytes -= len(line)
         if not boundary in line:
-            return (False, "Content NOT begin with boundary")
+            return (False)
         line = self.rfile.readline()
         remainbytes -= len(line)
         fn = re.findall(r'Content-Disposition.*name="file"; filename="(.*)"', line.decode())
@@ -116,8 +107,8 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                 out.write(preline)
                 out.close()
                 tmp = True
-                frame = 24
-                _format = "PNG"
+                frame = 1 # Deffault
+                _format = "PNG" # Deffault
                 while tmp:
                     try:
                         line = self.rfile.readline()
@@ -141,7 +132,8 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
                          
                     
                   
-                if fn.endswith(".blend"):
+                if fn.endswith(".blend"): 
+                    # Render if blender file basically the main function of the server
                     render_file(fn, frame, _format)
                 return (True, "File '%s' upload success!" % fn)
             else:
@@ -151,12 +143,6 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
  
     def translate_path(self, path):
-        """Translate a /-separated PATH to the local filename syntax.
-        Components that mean special things to the local file system
-        (e.g. drive or directory names) are ignored.  (XXX They should
-        probably be diagnosed.)
-        """
-        # abandon query parameters
         path = path.split('?',1)[0]
         path = path.split('#',1)[0]
         path = posixpath.normpath(urllib.parse.unquote(path))
@@ -171,13 +157,6 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
         return path
 
     def send_head(self):
-        """Common code for GET and HEAD commands.
-        This sends the response code and MIME headers.
-        Return value is either a file object (which has to be copied
-        to the outputfile by the caller unless the command was HEAD,
-        and must be closed by the caller under all circumstances), or
-        None, in which case the caller has nothing further to do.
-        """
         path = self.translate_path(self.path)
         f = None
         if os.path.isdir(path):
@@ -212,29 +191,9 @@ class SimpleHTTPRequestHandler(http.server.BaseHTTPRequestHandler):
 
  
     def copyfile(self, source, outputfile):
-        """Copy all data between two file objects.
-        The SOURCE argument is a file object open for reading
-        (or anything with a read() method) and the DESTINATION
-        argument is a file object open for writing (or
-        anything with a write() method).
-        The only reason for overriding this would be to change
-        the block size or perhaps to replace newlines by CRLF
-        -- note however that this the default server uses this
-        to copy binary data as well.
-        """
         shutil.copyfileobj(source, outputfile)
  
-    def guess_type(self, path):
-        """Guess the type of a file.
-        Argument is a PATH (a filename).
-        Return value is a string of the form type/subtype,
-        usable for a MIME Content-type header.
-        The default implementation looks the file's extension
-        up in the table self.extensions_map, using application/octet-stream
-        as a default; however it would be permissible (if
-        slow) to look inside the data to make a better guess.
-        """
- 
+    def guess_type(self, path): 
         base, ext = posixpath.splitext(path)
         if ext in self.extensions_map:
             return self.extensions_map[ext]
@@ -268,12 +227,23 @@ PORT = args.port
 BIND = args.bind
 HOST = BIND
 
+
+
 if HOST == '':
-	HOST = 'localhost'
+    HOST = str(socket.gethostbyname(socket.gethostname()))
+	
 
 Handler = SimpleHTTPRequestHandler
 
 with socketserver.TCPServer((BIND, PORT), Handler) as httpd:
 	serve_message = "Serving HTTP on {host} port {port} (http://{host}:{port}/) ..."
 	print(serve_message.format(host=HOST, port=PORT))
+    # if you want to enable https, uncomment the following lines
+    # PS : you need to create your certificate and key files first
+    # (eg : openssl req -x509 -newkey rsa:2048 -keyout key.pem -out server.pem -days 365)
+    # httpd.socket = ssl.wrap_socket(httpd.socket,
+    #                          server_side=True,
+    #                          certfile="./server.pem",
+    #                          keyfile="./key.pem",
+    #                          ssl_version=ssl.PROTOCOL_TLS)
 	httpd.serve_forever()
